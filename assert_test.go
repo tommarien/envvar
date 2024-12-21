@@ -14,10 +14,10 @@ func assertIsNil(t *testing.T, got any) {
 	}
 }
 
-func assertEqual(t *testing.T, got, want string) {
+func assertEqual[T comparable](t *testing.T, got, want T) {
 	t.Helper()
 	if got != want {
-		t.Errorf("expected %q, got %q", want, got)
+		t.Errorf("expected %v, got %v", want, got)
 	}
 }
 
@@ -26,8 +26,7 @@ func assertIsNotSetErr(t *testing.T, key string, got error) {
 
 	var err envvar.NotSetError
 	if !errors.As(got, &err) {
-		t.Errorf("expected NotSetError, got %T", got)
-		return
+		t.Fatalf("expected NotSetError, got %T", got)
 	}
 
 	if err.Key != key {
