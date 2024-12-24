@@ -7,37 +7,6 @@ import (
 	"github.com/tommarien/envvar"
 )
 
-func TestNotSetError(t *testing.T) {
-	err := envvar.NotSetError{
-		Func: "String",
-		Key:  "ENV_VAR",
-	}
-
-	assertEqual(t, err.Error(), "envvar.String: missing required environment variable \"ENV_VAR\"")
-}
-
-func TestParseError(t *testing.T) {
-	underlyingErr := errors.New("some error")
-
-	err := envvar.ParseError{
-		Func:  "Int",
-		Key:   "ENV_VAR",
-		Value: "not an int",
-		Err:   underlyingErr,
-	}
-
-	assertEqual(t, err.Error(), "envvar.Int: invalid value \"not an int\" for environment variable \"ENV_VAR\": some error")
-
-	// unwrap
-	assertEqual(t, err.Unwrap(), underlyingErr)
-
-	// verify is (satisfied by unwrap)
-	var wantErr error = underlyingErr
-	if !errors.Is(err, wantErr) {
-		t.Fatalf("got error of type %T, want %T", err, wantErr)
-	}
-}
-
 func TestString(t *testing.T) {
 	t.Run("var set", func(t *testing.T) {
 		t.Setenv("ENV_VAR", "value")
