@@ -30,18 +30,18 @@ func (e NotSetError) Error() string {
 	return fmt.Sprintf("envvar.%s: missing required environment variable %q", e.Func, e.Key)
 }
 
-// ConversionError represents an error when a conversion of an environment variable fails.
-type ConversionError struct {
+// ParseError represents an error when a conversion of an environment variable fails.
+type ParseError struct {
 	Func, Key, Value string
-	err              error
+	Err              error
 }
 
-func (e ConversionError) Error() string {
-	return fmt.Sprintf("envvar.%s: invalid value %q for environment variable %q: %v", e.Func, e.Value, e.Key, e.err)
+func (e ParseError) Error() string {
+	return fmt.Sprintf("envvar.%s: invalid value %q for environment variable %q: %v", e.Func, e.Value, e.Key, e.Err)
 }
 
-func (e ConversionError) Unwrap() error {
-	return e.err
+func (e ParseError) Unwrap() error {
+	return e.Err
 }
 
 // String retrieves the value of the environment variable named by the key.
@@ -73,7 +73,7 @@ func StringOrDefault(key, defaultValue string) string {
 
 // Int retrieves the value of the environment variable named by the key and converts it to an integer.
 // If the variable is present in the environment the value is returned otherwise it returns a [NotSetError].
-// If the conversion fails it returns a [ConversionError].
+// If the conversion fails it returns a [ParseError].
 func Int(key string) (int, error) {
 	variable, ok := os.LookupEnv(key)
 	if !ok {
@@ -82,7 +82,24 @@ func Int(key string) (int, error) {
 
 	value, err := strconv.Atoi(variable)
 	if err != nil {
-		return 0, ConversionError{Func: "Int", Key: key, Value: variable, err: err}
+		return 0, ParseError{Func: "Int", Key: key, Value: variable, Err: err}
+	}
+
+	return value, nil
+}
+
+// IntOrDefault retrieves the value of the environment variable named by the key and converts it to an integer.
+// If the variable is present in the environment the value is converted otherwise it returns the defaultValue.
+// If the conversion fails it returns a [ParseError].
+func IntOrDefault(key string, defaultValue int) (int, error) {
+	variable, ok := os.LookupEnv(key)
+	if !ok {
+		return defaultValue, nil
+	}
+
+	value, err := strconv.Atoi(variable)
+	if err != nil {
+		return 0, ParseError{Func: "IntOrDefault", Key: key, Value: variable, Err: err}
 	}
 
 	return value, nil
