@@ -12,10 +12,6 @@ func (p ParserError) Unwrap() []error {
 	panic("unimplemented")
 }
 
-func (e ParserError) Is(err error) bool {
-	panic("unimplemented")
-}
-
 type Parser struct {
 	actions map[string]func() error
 }

@@ -20,63 +20,75 @@ import (
 	"strconv"
 )
 
-// String retrieves the value of the environment variable named by the key.
-// If the variable is present in the environment the value (which may be empty) is returned
-// otherwise it returns a [NotSetError].
-func String(key string) (string, error) {
-	value, ok := os.LookupEnv(key)
+type config[T any] struct {
+	name         string
+	defaultValue *T
+}
+
+func withName[T any](name string) func(c *config[T]) {
+	return func(c *config[T]) {
+		c.name = name
+	}
+}
+
+// WithDefault sets the default value for the environment variable
+// if it is not set.
+func WithDefault[T any](defaultValue T) func(c *config[T]) {
+	return func(c *config[T]) {
+		c.defaultValue = &defaultValue
+	}
+}
+
+func zero[T any]() T {
+	var zero T
+	return zero
+}
+
+func get[T any](key string, parser func(string) (T, error), options ...func(c *config[T])) (T, error) {
+	cfg := config[T]{
+		name: "Get",
+	}
+
+	for _, opt := range options {
+		opt(&cfg)
+	}
+
+	envVar, ok := os.LookupEnv(key)
 	if !ok {
-		return "", NotSetError{
-			Func: "String",
-			Key:  key,
+		if cfg.defaultValue != nil {
+			return *cfg.defaultValue, nil
 		}
+
+		return zero[T](), NotSetError{Func: cfg.name, Key: key}
+	}
+
+	value, err := parser(envVar)
+	if err != nil {
+		return zero[T](), ParseError{Func: cfg.name, Key: key, Value: envVar, Err: err}
 	}
 
 	return value, nil
 }
 
-// StringOrDefault retrieves the value of the environment variable named by the key.
-// If the variable is present in the environment the value (which may be empty) is returned
-// otherwise it returns the defaultValue.
-func StringOrDefault(key, defaultValue string) string {
-	value, ok := os.LookupEnv(key)
-	if !ok {
-		return defaultValue
-	}
-
-	return value
+// String retrieves the value of the environment variable named by the key.
+// If the variable is present in the environment, the value (which may be empty) is returned.
+// If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
+func String(key string, options ...func(c *config[string])) (string, error) {
+	return get(
+		key,
+		func(s string) (string, error) { return s, nil },
+		append(options, withName[string]("String"))...,
+	)
 }
 
 // Int retrieves the value of the environment variable named by the key and converts it to an integer.
-// If the variable is present in the environment the value is returned otherwise it returns a [NotSetError].
+// If the variable is present in the environment, the value is returned.
+// If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
 // If the conversion fails it returns a [ParseError].
-func Int(key string) (int, error) {
-	variable, ok := os.LookupEnv(key)
-	if !ok {
-		return 0, NotSetError{Func: "Int", Key: key}
-	}
-
-	value, err := strconv.Atoi(variable)
-	if err != nil {
-		return 0, ParseError{Func: "Int", Key: key, Value: variable, Err: err}
-	}
-
-	return value, nil
-}
-
-// IntOrDefault retrieves the value of the environment variable named by the key and converts it to an integer.
-// If the variable is present in the environment the value is converted otherwise it returns the defaultValue.
-// If the conversion fails it returns a [ParseError].
-func IntOrDefault(key string, defaultValue int) (int, error) {
-	variable, ok := os.LookupEnv(key)
-	if !ok {
-		return defaultValue, nil
-	}
-
-	value, err := strconv.Atoi(variable)
-	if err != nil {
-		return 0, ParseError{Func: "IntOrDefault", Key: key, Value: variable, Err: err}
-	}
-
-	return value, nil
+func Int(key string, options ...func(c *config[int])) (int, error) {
+	return get(
+		key,
+		strconv.Atoi,
+		append(options, withName[int]("Int"))...,
+	)
 }
