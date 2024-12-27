@@ -2,6 +2,7 @@ package envvar_test
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/tommarien/envvar"
@@ -93,5 +94,56 @@ func TestInt(t *testing.T) {
 		got, err := envvar.Int("ENV_VAR", envvar.WithDefault(30))
 		assertIsNil(t, err)
 		assertEqual(t, got, 30)
+	})
+}
+
+func TestBool(t *testing.T) {
+	trueCases := []string{"1", "true", "t", "True", "T"}
+	falseCases := []string{"0", "false", "f", "False", "F"}
+
+	for _, trueString := range trueCases {
+		t.Run(fmt.Sprintf("var set to %s returns true", trueString), func(t *testing.T) {
+			t.Setenv("ENV_VAR", trueString)
+
+			got, err := envvar.Bool("ENV_VAR")
+			assertIsNil(t, err)
+			assertEqual(t, got, true)
+		})
+	}
+
+	for _, falseString := range falseCases {
+		t.Run(fmt.Sprintf("var set to %s returns false", falseString), func(t *testing.T) {
+			t.Setenv("ENV_VAR", falseString)
+
+			got, err := envvar.Bool("ENV_VAR")
+			assertIsNil(t, err)
+			assertEqual(t, got, false)
+		})
+	}
+
+	t.Run("var set to invalid value", func(t *testing.T) {
+		t.Setenv("ENV_VAR", "not a bool")
+
+		_, err := envvar.Bool("ENV_VAR")
+
+		var wantErr envvar.ParseError
+		if !errors.As(err, &wantErr) {
+			t.Fatalf("got error of type %T, want %T", err, wantErr)
+		}
+
+		assertEqual(t, wantErr.Key, "ENV_VAR")
+		assertEqual(t, wantErr.Value, "not a bool")
+	})
+
+	t.Run("var not set", func(t *testing.T) {
+		_, err := envvar.Bool("ENV_VAR")
+		assertIsNotSetErr(t, "ENV_VAR", err)
+		assertEqual(t, err.Error(), "envvar.Bool: missing required environment variable \"ENV_VAR\"")
+	})
+
+	t.Run("var not set with default option", func(t *testing.T) {
+		got, err := envvar.Bool("ENV_VAR", envvar.WithDefault(false))
+		assertIsNil(t, err)
+		assertEqual(t, got, false)
 	})
 }

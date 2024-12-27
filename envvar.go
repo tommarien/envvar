@@ -3,14 +3,7 @@
 //
 // Example:
 //
-//	type config struct {
-//		Home string `env:"HOME"`
-//	}
-//	// parse
-//	var cfg config
-//	err := env.Parse(&cfg)
-//	// or parse with generics
-//	cfg, err := env.ParseAs[config]()
+// TODO: Write sample
 //
 // Check the examples and README for more detailed usage.
 package envvar
@@ -90,5 +83,17 @@ func Int(key string, options ...func(c *config[int])) (int, error) {
 		key,
 		strconv.Atoi,
 		append(options, withName[int]("Int"))...,
+	)
+}
+
+// Bool retrieves the value of the environment variable named by the key and converts it to a boolean.
+// If the variable is present in the environment, the value is returned.
+// If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
+// If the conversion fails it returns a [ParseError].
+func Bool(key string, options ...func(c *config[bool])) (bool, error) {
+	return get(
+		key,
+		strconv.ParseBool,
+		append(options, withName[bool]("Bool"))...,
 	)
 }
