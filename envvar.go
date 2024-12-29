@@ -3,7 +3,19 @@
 //
 // Example:
 //
-// TODO: Write sample
+//	type Config struct {
+//		Port  int
+//	}
+//
+//	var config Config
+//
+//	parser := envvar.NewParser()
+//	parser.IntVar(&config.Port, "PORT", envvar.WithDefault(8080))
+//	err := parser.Parse()
+//
+//	if err != nil {
+//	  log.Fatal(err)
+//	}
 //
 // Check the examples and README for more detailed usage.
 package envvar
@@ -57,7 +69,7 @@ func get[T any](key string, parser func(string) (T, error), options ...func(c *c
 
 	value, err := parser(envVar)
 	if err != nil {
-		return zero[T](), ParseError{Func: cfg.name, Key: key, Value: envVar, Err: err}
+		return zero[T](), ConversionError{Func: cfg.name, Key: key, Value: envVar, Err: err}
 	}
 
 	return value, nil
@@ -77,7 +89,7 @@ func String(key string, options ...func(c *config[string])) (string, error) {
 // Int retrieves the value of the environment variable named by the key and converts it to an integer.
 // If the variable is present in the environment, the value is returned.
 // If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
-// If the conversion fails it returns a [ParseError].
+// If the conversion fails it returns a [ConversionError].
 func Int(key string, options ...func(c *config[int])) (int, error) {
 	return get(
 		key,
@@ -89,7 +101,7 @@ func Int(key string, options ...func(c *config[int])) (int, error) {
 // Bool retrieves the value of the environment variable named by the key and converts it to a boolean.
 // If the variable is present in the environment, the value is returned.
 // If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
-// If the conversion fails it returns a [ParseError].
+// If the conversion fails it returns a [ConversionError].
 func Bool(key string, options ...func(c *config[bool])) (bool, error) {
 	return get(
 		key,

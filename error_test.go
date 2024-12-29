@@ -19,10 +19,10 @@ func TestNotSetError(t *testing.T) {
 	assertEqual(t, got, want)
 }
 
-func TestParseError(t *testing.T) {
+func TestConversionError(t *testing.T) {
 	underlyingErr := errors.New("some error")
 
-	err := envvar.ParseError{
+	err := envvar.ConversionError{
 		Func:  "Int",
 		Key:   "ENV_VAR",
 		Value: "not an int",

@@ -1,33 +1,81 @@
 package envvar
 
-type ParserError struct {
-	errors map[string]error
-}
-
-func (p ParserError) Error() string {
-	panic("unimplemented")
-}
-
-func (p ParserError) Unwrap() []error {
-	panic("unimplemented")
-}
-
+// Parser provides an easy way to parse environment variables into Go variables or structures.
 type Parser struct {
 	actions map[string]func() error
 }
 
-func (parser *Parser) String(p *string, key string) *Parser {
-	panic("unimplemented")
+// BoolVar registers a boolean variable with the parser. It takes a pointer to
+// a bool, a key, and optional configuration functions. The registered action
+// retrieves the boolean value associated with the key and assigns it to the
+// provided pointer.
+func (parser *Parser) BoolVar(p *bool, key string, options ...func(c *config[bool])) {
+	parser.actions[key] = func() error {
+		value, err := Bool(key, options...)
+		if err != nil {
+			return err
+		}
+
+		*p = value
+
+		return nil
+	}
 }
 
-func (parser *Parser) StringOrDefault(p *string, key, defaultValue string) *Parser {
-	panic("unimplemented")
+// StringVar registers a string variable with the parser. It takes a pointer to
+// a string, a key, and optional configuration functions. The registered action
+// retrieves the string value associated with the key and assigns it to the
+// provided pointer.
+func (parser *Parser) StringVar(p *string, key string, options ...func(c *config[string])) {
+	parser.actions[key] = func() error {
+		value, err := String(key, options...)
+		if err != nil {
+			return err
+		}
+
+		*p = value
+
+		return nil
+	}
 }
 
+// IntVar registers a int variable with the parser. It takes a pointer to
+// a int, a key, and optional configuration functions. The registered action
+// retrieves the int value associated with the key and assigns it to the
+// provided pointer.
+func (parser *Parser) IntVar(p *int, key string, options ...func(c *config[int])) {
+	parser.actions[key] = func() error {
+		value, err := Int(key, options...)
+		if err != nil {
+			return err
+		}
+
+		*p = value
+
+		return nil
+	}
+}
+
+// Parse executes all registered actions. If an error occurs during the parsing
+// process, it returns a [ParserError] containing all errors.
 func (parser *Parser) Parse() error {
-	panic("unimplemented")
+	errors := make(map[string]error)
+
+	for key, action := range parser.actions {
+		err := action()
+		if err != nil {
+			errors[key] = err
+		}
+	}
+
+	if len(errors) > 0 {
+		return ParserError{errors}
+	}
+
+	return nil
 }
 
+// NewParser creates a new [Parser].
 func NewParser() *Parser {
 	return &Parser{actions: make(map[string]func() error)}
 }
