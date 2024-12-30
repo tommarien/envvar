@@ -1,7 +1,6 @@
 package envvar_test
 
 import (
-	"errors"
 	"testing"
 
 	"github.com/tommarien/envvar"
@@ -24,12 +23,12 @@ func assertEqual[T comparable](t *testing.T, got, want T) {
 func assertIsNotSetErr(t *testing.T, key string, got error) {
 	t.Helper()
 
-	var err envvar.NotSetError
-	if !errors.As(got, &err) {
+	notSetErr, ok := got.(envvar.NotSetError)
+	if !ok {
 		t.Fatalf("expected NotSetError, got %T", got)
 	}
 
-	if err.Key != key {
-		t.Errorf("expected NotSetError with key %q, got %q", key, err.Key)
+	if notSetErr.Key != key {
+		t.Errorf("expected NotSetError with key %q, got %q", key, notSetErr.Key)
 	}
 }

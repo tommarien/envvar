@@ -1,7 +1,6 @@
 package envvar_test
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
@@ -75,13 +74,13 @@ func TestInt(t *testing.T) {
 
 		_, err := envvar.Int("ENV_VAR")
 
-		var wantErr envvar.ConversionError
-		if !errors.As(err, &wantErr) {
-			t.Fatalf("got error of type %T, want %T", err, wantErr)
+		convErr, ok := err.(envvar.ConversionError)
+		if !ok {
+			t.Fatalf("got error of type %T, want ConversionError", err)
 		}
 
-		assertEqual(t, wantErr.Key, "ENV_VAR")
-		assertEqual(t, wantErr.Value, "not an int")
+		assertEqual(t, convErr.Key, "ENV_VAR")
+		assertEqual(t, convErr.Value, "not an int")
 	})
 
 	t.Run("var not set", func(t *testing.T) {
@@ -126,13 +125,13 @@ func TestBool(t *testing.T) {
 
 		_, err := envvar.Bool("ENV_VAR")
 
-		var wantErr envvar.ConversionError
-		if !errors.As(err, &wantErr) {
-			t.Fatalf("got error of type %T, want %T", err, wantErr)
+		convErr, ok := err.(envvar.ConversionError)
+		if !ok {
+			t.Fatalf("got error of type %T, want ConversionError", err)
 		}
 
-		assertEqual(t, wantErr.Key, "ENV_VAR")
-		assertEqual(t, wantErr.Value, "not a bool")
+		assertEqual(t, convErr.Key, "ENV_VAR")
+		assertEqual(t, convErr.Value, "not a bool")
 	})
 
 	t.Run("var not set", func(t *testing.T) {
