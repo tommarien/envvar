@@ -11,7 +11,7 @@ func TestParserString(t *testing.T) {
 		t.Setenv("ENV_VAR", "value")
 
 		var value string
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		parser.StringVar(&value, "ENV_VAR")
 
@@ -21,7 +21,7 @@ func TestParserString(t *testing.T) {
 	})
 
 	t.Run("sets the value to default when specified", func(t *testing.T) {
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		var value string
 		parser.StringVar(&value, "ENV_VAR", envvar.WithDefault("default"))
@@ -32,7 +32,7 @@ func TestParserString(t *testing.T) {
 	})
 
 	t.Run("returns a parser error when the value is unset", func(t *testing.T) {
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		var value string
 		parser.StringVar(&value, "ENV_VAR")
@@ -42,7 +42,7 @@ func TestParserString(t *testing.T) {
 			t.Fatal("expected error got nil")
 		}
 
-		pErr, ok := err.(envvar.ParserError)
+		pErr, ok := err.(envvar.GroupParseError)
 		if !ok {
 			t.Fatalf("expected ParserError got %t", err)
 		}
@@ -59,7 +59,7 @@ func TestIntVar(t *testing.T) {
 		t.Setenv("ENV_VAR", "42")
 
 		var value int
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		parser.IntVar(&value, "ENV_VAR")
 
@@ -69,7 +69,7 @@ func TestIntVar(t *testing.T) {
 	})
 
 	t.Run("sets the value to default when specified", func(t *testing.T) {
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		var value int
 		parser.IntVar(&value, "ENV_VAR", envvar.WithDefault(42))
@@ -80,7 +80,7 @@ func TestIntVar(t *testing.T) {
 	})
 
 	t.Run("returns a parser error when the value is unset", func(t *testing.T) {
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		var value int
 		parser.IntVar(&value, "ENV_VAR")
@@ -90,7 +90,7 @@ func TestIntVar(t *testing.T) {
 			t.Fatal("expected error got nil")
 		}
 
-		pErr, ok := err.(envvar.ParserError)
+		pErr, ok := err.(envvar.GroupParseError)
 		if !ok {
 			t.Fatalf("expected ParserError got %t", err)
 		}
@@ -107,7 +107,7 @@ func TestBoolVar(t *testing.T) {
 		t.Setenv("ENV_VAR", "true")
 
 		var value bool
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		parser.BoolVar(&value, "ENV_VAR")
 
@@ -117,7 +117,7 @@ func TestBoolVar(t *testing.T) {
 	})
 
 	t.Run("sets the value to default when specified", func(t *testing.T) {
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		var value bool
 		parser.BoolVar(&value, "ENV_VAR", envvar.WithDefault(true))
@@ -128,7 +128,7 @@ func TestBoolVar(t *testing.T) {
 	})
 
 	t.Run("returns a parser error when the value is unset", func(t *testing.T) {
-		parser := envvar.NewParser()
+		parser := envvar.NewGroup()
 
 		var value bool
 		parser.BoolVar(&value, "ENV_VAR")
@@ -138,7 +138,7 @@ func TestBoolVar(t *testing.T) {
 			t.Fatal("expected error got nil")
 		}
 
-		pErr, ok := err.(envvar.ParserError)
+		pErr, ok := err.(envvar.GroupParseError)
 		if !ok {
 			t.Fatalf("expected ParserError got %t", err)
 		}

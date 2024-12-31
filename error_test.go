@@ -20,10 +20,10 @@ func TestNotSetError(t *testing.T) {
 	assertEqual(t, got, want)
 }
 
-func TestConversionError(t *testing.T) {
+func TestParseError(t *testing.T) {
 	underlyingErr := errors.New("some error")
 
-	err := envvar.ConversionError{
+	err := envvar.ParseError{
 		Func:  "Int",
 		Key:   "ENV_VAR",
 		Value: "not an int",
@@ -40,7 +40,7 @@ func TestConversionError(t *testing.T) {
 	}
 }
 
-func TestParserError(t *testing.T) {
+func TestParseGroupError(t *testing.T) {
 	underlyingErr := errors.New("some error")
 	underlyingErr2 := errors.New("some other error")
 
@@ -51,7 +51,7 @@ func TestParserError(t *testing.T) {
 	errorMap[key2] = underlyingErr2
 	errorMap[key1] = underlyingErr
 
-	err := envvar.ParserError{
+	err := envvar.GroupParseError{
 		Errors: errorMap,
 	}
 
@@ -87,7 +87,7 @@ func TestParserError(t *testing.T) {
 			t,
 			got,
 			fmt.Sprintf(
-				"Parser.Parse: failed for the following envvars: key1,key2\n%v\n%v",
+				"Group.Parse: parsing failed for: key1,key2\n%v\n%v",
 				underlyingErr,
 				underlyingErr2,
 			),

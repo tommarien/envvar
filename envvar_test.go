@@ -74,7 +74,7 @@ func TestInt(t *testing.T) {
 
 		_, err := envvar.Int("ENV_VAR")
 
-		convErr, ok := err.(envvar.ConversionError)
+		convErr, ok := err.(envvar.ParseError)
 		if !ok {
 			t.Fatalf("got error of type %T, want ConversionError", err)
 		}
@@ -125,7 +125,7 @@ func TestBool(t *testing.T) {
 
 		_, err := envvar.Bool("ENV_VAR")
 
-		convErr, ok := err.(envvar.ConversionError)
+		convErr, ok := err.(envvar.ParseError)
 		if !ok {
 			t.Fatalf("got error of type %T, want ConversionError", err)
 		}

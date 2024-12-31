@@ -16,34 +16,34 @@ func (e NotSetError) Error() string {
 	return fmt.Sprintf("envvar.%s: missing required environment variable %q", e.Func, e.Key)
 }
 
-// ConversionError represents an error when a conversion of an environment variable fails.
-type ConversionError struct {
+// ParseError represents an error when a conversion of an environment variable fails.
+type ParseError struct {
 	Func, Key, Value string
 	Err              error
 }
 
-func (e ConversionError) Error() string {
+func (e ParseError) Error() string {
 	return fmt.Sprintf("envvar.%s: invalid value %q for environment variable %q: %v", e.Func, e.Value, e.Key, e.Err)
 }
 
-func (e ConversionError) Unwrap() error {
+func (e ParseError) Unwrap() error {
 	return e.Err
 }
 
-// ParserError represents an error when there are errors
-// parsing the environment variables using [Parser].
-type ParserError struct {
+// GroupParseError represents an error when there are errors
+// parsing the environment variables using [Group].
+type GroupParseError struct {
 	Errors map[string]error
 }
 
 // GetError returns the error for the given key if any.
-func (p ParserError) GetError(key string) error {
+func (p GroupParseError) GetError(key string) error {
 	return p.Errors[key]
 }
 
-func (p ParserError) Error() string {
+func (p GroupParseError) Error() string {
 	var sb strings.Builder
-	sb.WriteString("Parser.Parse: failed for the following envvars: ")
+	sb.WriteString("Group.Parse: parsing failed for: ")
 
 	keys := p.sortedKeys()
 	errs := make([]error, 0, len(keys))
@@ -60,7 +60,7 @@ func (p ParserError) Error() string {
 	return sb.String()
 }
 
-func (p ParserError) sortedKeys() []string {
+func (p GroupParseError) sortedKeys() []string {
 	keys := make([]string, 0, len(p.Errors))
 
 	for key := range p.Errors {
@@ -72,7 +72,7 @@ func (p ParserError) sortedKeys() []string {
 	return keys
 }
 
-func (p ParserError) Unwrap() []error {
+func (p GroupParseError) Unwrap() []error {
 	keys := p.sortedKeys()
 	errs := make([]error, 0, len(keys))
 

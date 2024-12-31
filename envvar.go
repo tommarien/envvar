@@ -9,9 +9,9 @@
 //
 //	var config Config
 //
-//	parser := envvar.NewParser()
-//	parser.IntVar(&config.Port, "PORT", envvar.WithDefault(8080))
-//	err := parser.Parse()
+//	group := envvar.NewGroup()
+//	group.IntVar(&config.Port, "PORT", envvar.WithDefault(8080))
+//	err := group.Parse()
 //
 //	if err != nil {
 //	  log.Fatal(err)
@@ -25,21 +25,21 @@ import (
 	"strconv"
 )
 
-type config[T any] struct {
+type parseConfig[T any] struct {
 	name         string
 	defaultValue *T
 }
 
-func withName[T any](name string) func(c *config[T]) {
-	return func(c *config[T]) {
+func withName[T any](name string) func(c *parseConfig[T]) {
+	return func(c *parseConfig[T]) {
 		c.name = name
 	}
 }
 
 // WithDefault sets the default value for the environment variable
 // if it is not set.
-func WithDefault[T any](defaultValue T) func(c *config[T]) {
-	return func(c *config[T]) {
+func WithDefault[T any](defaultValue T) func(c *parseConfig[T]) {
+	return func(c *parseConfig[T]) {
 		c.defaultValue = &defaultValue
 	}
 }
@@ -49,9 +49,10 @@ func zero[T any]() T {
 	return zero
 }
 
-func get[T any](key string, parser func(string) (T, error), options ...func(c *config[T])) (T, error) {
-	cfg := config[T]{
-		name: "Get",
+// TODO: Rename to Func
+func get[T any](key string, parser func(string) (T, error), options ...func(c *parseConfig[T])) (T, error) {
+	cfg := parseConfig[T]{
+		name: "Func",
 	}
 
 	for _, opt := range options {
@@ -69,7 +70,7 @@ func get[T any](key string, parser func(string) (T, error), options ...func(c *c
 
 	value, err := parser(envVar)
 	if err != nil {
-		return zero[T](), ConversionError{Func: cfg.name, Key: key, Value: envVar, Err: err}
+		return zero[T](), ParseError{Func: cfg.name, Key: key, Value: envVar, Err: err}
 	}
 
 	return value, nil
@@ -78,7 +79,7 @@ func get[T any](key string, parser func(string) (T, error), options ...func(c *c
 // String retrieves the value of the environment variable named by the key.
 // If the variable is present in the environment, the value (which may be empty) is returned.
 // If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
-func String(key string, options ...func(c *config[string])) (string, error) {
+func String(key string, options ...func(c *parseConfig[string])) (string, error) {
 	return get(
 		key,
 		func(s string) (string, error) { return s, nil },
@@ -89,8 +90,8 @@ func String(key string, options ...func(c *config[string])) (string, error) {
 // Int retrieves the value of the environment variable named by the key and converts it to an integer.
 // If the variable is present in the environment, the value is returned.
 // If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
-// If the conversion fails it returns a [ConversionError].
-func Int(key string, options ...func(c *config[int])) (int, error) {
+// If the conversion fails it returns a [ParseError].
+func Int(key string, options ...func(c *parseConfig[int])) (int, error) {
 	return get(
 		key,
 		strconv.Atoi,
@@ -101,8 +102,8 @@ func Int(key string, options ...func(c *config[int])) (int, error) {
 // Bool retrieves the value of the environment variable named by the key and converts it to a boolean.
 // If the variable is present in the environment, the value is returned.
 // If the variable is not present, it returns a [NotSetError] or the default value if it was set via options.
-// If the conversion fails it returns a [ConversionError].
-func Bool(key string, options ...func(c *config[bool])) (bool, error) {
+// If the conversion fails it returns a [ParseError].
+func Bool(key string, options ...func(c *parseConfig[bool])) (bool, error) {
 	return get(
 		key,
 		strconv.ParseBool,
