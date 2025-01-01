@@ -9,9 +9,9 @@
 //
 //	var config Config
 //
-//	group := envvar.NewGroup()
-//	group.IntVar(&config.Port, "PORT", envvar.WithDefault(8080))
-//	err := group.Parse()
+//	env := envvar.NewGroup()
+//	env.IntVar(&config.Port, "PORT", envvar.WithDefault(8080))
+//	err := env.Parse()
 //
 //	if err != nil {
 //	  log.Fatal(err)
@@ -44,11 +44,6 @@ func WithDefault[T any](defaultValue T) func(c *parseConfig[T]) {
 	}
 }
 
-func zero[T any]() T {
-	var zero T
-	return zero
-}
-
 // TODO: Rename to Func
 func get[T any](key string, parser func(string) (T, error), options ...func(c *parseConfig[T])) (T, error) {
 	cfg := parseConfig[T]{
@@ -65,12 +60,13 @@ func get[T any](key string, parser func(string) (T, error), options ...func(c *p
 			return *cfg.defaultValue, nil
 		}
 
-		return zero[T](), NotSetError{Func: cfg.name, Key: key}
+		var zero T
+		return zero, NotSetError{Func: cfg.name, Key: key}
 	}
 
 	value, err := parser(envVar)
 	if err != nil {
-		return zero[T](), ParseError{Func: cfg.name, Key: key, Value: envVar, Err: err}
+		return value, ParseError{Func: cfg.name, Key: key, Value: envVar, Err: err}
 	}
 
 	return value, nil
