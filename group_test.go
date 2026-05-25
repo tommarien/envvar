@@ -44,12 +44,12 @@ func TestParserString(t *testing.T) {
 
 		pErr, ok := err.(envvar.GroupParseError)
 		if !ok {
-			t.Fatalf("expected ParserError got %t", err)
+			t.Fatalf("expected ParserError got %T", err)
 		}
 
 		errOnEnvVar := pErr.GetError("ENV_VAR")
 		if _, ok := errOnEnvVar.(envvar.NotSetError); !ok {
-			t.Fatalf("expected NotSetError on ENV_VAR got %t", errOnEnvVar)
+			t.Fatalf("expected NotSetError on ENV_VAR got %T", errOnEnvVar)
 		}
 	})
 }
@@ -92,12 +92,12 @@ func TestIntVar(t *testing.T) {
 
 		pErr, ok := err.(envvar.GroupParseError)
 		if !ok {
-			t.Fatalf("expected ParserError got %t", err)
+			t.Fatalf("expected ParserError got %T", err)
 		}
 
 		errOnEnvVar := pErr.GetError("ENV_VAR")
 		if _, ok := errOnEnvVar.(envvar.NotSetError); !ok {
-			t.Fatalf("expected NotSetError on ENV_VAR got %t", errOnEnvVar)
+			t.Fatalf("expected NotSetError on ENV_VAR got %T", errOnEnvVar)
 		}
 	})
 }
@@ -140,12 +140,12 @@ func TestBoolVar(t *testing.T) {
 
 		pErr, ok := err.(envvar.GroupParseError)
 		if !ok {
-			t.Fatalf("expected ParserError got %t", err)
+			t.Fatalf("expected ParserError got %T", err)
 		}
 
 		errOnEnvVar := pErr.GetError("ENV_VAR")
 		if _, ok := errOnEnvVar.(envvar.NotSetError); !ok {
-			t.Fatalf("expected NotSetError on ENV_VAR got %t", errOnEnvVar)
+			t.Fatalf("expected NotSetError on ENV_VAR got %T", errOnEnvVar)
 		}
 	})
 }

@@ -76,7 +76,7 @@ func TestInt(t *testing.T) {
 
 		convErr, ok := err.(envvar.ParseError)
 		if !ok {
-			t.Fatalf("got error of type %T, want ConversionError", err)
+			t.Fatalf("got error of type %T, want ParseError", err)
 		}
 
 		assertEqual(t, convErr.Key, "ENV_VAR")
@@ -127,7 +127,7 @@ func TestBool(t *testing.T) {
 
 		convErr, ok := err.(envvar.ParseError)
 		if !ok {
-			t.Fatalf("got error of type %T, want ConversionError", err)
+			t.Fatalf("got error of type %T, want ParseError", err)
 		}
 
 		assertEqual(t, convErr.Key, "ENV_VAR")
