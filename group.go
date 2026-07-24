@@ -10,6 +10,9 @@ type Group struct {
 // retrieves the boolean value associated with the key and assigns it to the
 // provided pointer.
 func (grp *Group) BoolVar(p *bool, key string, options ...func(c *parseConfig[bool])) {
+	if grp.actions == nil {
+		grp.actions = make(map[string]func() error)
+	}
 	grp.actions[key] = func() error {
 		value, err := Bool(key, options...)
 		if err != nil {
@@ -27,6 +30,9 @@ func (grp *Group) BoolVar(p *bool, key string, options ...func(c *parseConfig[bo
 // retrieves the string value associated with the key and assigns it to the
 // provided pointer.
 func (grp *Group) StringVar(p *string, key string, options ...func(c *parseConfig[string])) {
+	if grp.actions == nil {
+		grp.actions = make(map[string]func() error)
+	}
 	grp.actions[key] = func() error {
 		value, err := String(key, options...)
 		if err != nil {
@@ -44,6 +50,9 @@ func (grp *Group) StringVar(p *string, key string, options ...func(c *parseConfi
 // retrieves the int value associated with the key and assigns it to the
 // provided pointer.
 func (grp *Group) IntVar(p *int, key string, options ...func(c *parseConfig[int])) {
+	if grp.actions == nil {
+		grp.actions = make(map[string]func() error)
+	}
 	grp.actions[key] = func() error {
 		value, err := Int(key, options...)
 		if err != nil {
