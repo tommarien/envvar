@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// ParseFunc converts a raw environment variable value into T.
+// ParseFunc converts a string value into T.
 type ParseFunc[T any] func(value string) (T, error)
 
 // Func returns the value of the environment variable named by key, converted by parse.
