@@ -51,21 +51,23 @@ func TestStringOrDefault(t *testing.T) {
 }
 
 func TestInt(t *testing.T) {
-	t.Run("var set", func(t *testing.T) {
-		t.Setenv("ENV_VAR", "100")
+	for _, tc := range []struct {
+		value string
+		want  int
+	}{
+		{"-1", -1},
+		{"0", 0},
+		{"1", 1},
+		{"10", 10},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
 
-		got, err := envvar.Int("ENV_VAR")
-		assertIsNil(t, err)
-		assertEqual(t, got, 100)
-	})
-
-	t.Run("var set to zero value", func(t *testing.T) {
-		t.Setenv("ENV_VAR", "0")
-
-		got, err := envvar.Int("ENV_VAR")
-		assertIsNil(t, err)
-		assertEqual(t, got, 0)
-	})
+			got, err := envvar.Int("ENV_VAR")
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
 
 	t.Run("var not set", func(t *testing.T) {
 		_, err := envvar.Int("ENV_VAR")
@@ -81,21 +83,23 @@ func TestInt(t *testing.T) {
 }
 
 func TestIntOrDefault(t *testing.T) {
-	t.Run("var set", func(t *testing.T) {
-		t.Setenv("ENV_VAR", "100")
+	for _, tc := range []struct {
+		value string
+		want  int
+	}{
+		{"-1", -1},
+		{"0", 0},
+		{"1", 1},
+		{"10", 10},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
 
-		got, err := envvar.IntOrDefault("ENV_VAR", 42)
-		assertIsNil(t, err)
-		assertEqual(t, got, 100)
-	})
-
-	t.Run("var set to zero value", func(t *testing.T) {
-		t.Setenv("ENV_VAR", "0")
-
-		got, err := envvar.IntOrDefault("ENV_VAR", 42)
-		assertIsNil(t, err)
-		assertEqual(t, got, 0)
-	})
+			got, err := envvar.IntOrDefault("ENV_VAR", 42)
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
 
 	t.Run("var not set", func(t *testing.T) {
 		got, err := envvar.IntOrDefault("ENV_VAR", 42)
