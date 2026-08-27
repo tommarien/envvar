@@ -1,3 +1,46 @@
+// Package envvar reads and converts environment variables, with no
+// dependencies outside the standard library.
+//
+// Every accessor takes the name of an environment variable and reports a
+// [NotSetError] when it is not set, or a [ParseError] when its value cannot
+// be converted:
+//
+//	port, err := envvar.Int("PORT")
+//
+// Each has an OrDefault counterpart falling back to the given value when the
+// variable is not set. [StringOrDefault] is the exception that cannot fail,
+// so it returns no error:
+//
+//	region := envvar.StringOrDefault("REGION", "eu-west-1")
+//	timeout, err := envvar.DurationOrDefault("TIMEOUT", 10*time.Minute)
+//
+// [String], [Int], [Bool], [UInt], [Float] and [Duration] cover the common
+// types. [Func] and [FuncOrDefault] take a [ParseFunc] and so convert into
+// any type.
+//
+// # Parsing several variables at once
+//
+// A [VarSet] collects variables and parses them together, so a single call
+// reports every problem instead of only the first. Its zero value is ready
+// for use:
+//
+//	var (
+//		cfg Config
+//		set envvar.VarSet
+//	)
+//
+//	envvar.StringVar(&set, &cfg.Name, "NAME")
+//	envvar.StringVarOrDefault(&set, &cfg.Region, "REGION", "eu-west-1")
+//	envvar.IntVar(&set, &cfg.Port, "PORT")
+//	envvar.DurationVarOrDefault(&set, &cfg.Timeout, "TIMEOUT", 10*time.Minute)
+//
+//	if err := set.Parse(); err != nil {
+//		log.Fatal(err)
+//	}
+//
+// [VarSet.Parse] runs the registrations in order, assigns each value in place
+// and returns a [VarSetParseError] holding every failure. Each accessor has a
+// matching registration function, [FuncVar] and [FuncVarOrDefault] included.
 package envvar
 
 import (
