@@ -29,7 +29,7 @@ func TestParseError(t *testing.T) {
 		Err:   underlyingErr,
 	}
 
-	want := "envvar.Int: invalid value \"not an int\" for environment variable \"ENV_VAR\": some error"
+	want := "envvar.Int: invalid value \"not an int\" for environment variable \"ENV_VAR\""
 	got := err.Error()
 	assertEqual(t, got, want)
 

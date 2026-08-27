@@ -20,7 +20,7 @@ type ParseError struct {
 }
 
 func (e ParseError) Error() string {
-	return fmt.Sprintf("envvar.%s: invalid value %q for environment variable %q: %v", e.Func, e.Value, e.Key, e.Err)
+	return fmt.Sprintf("envvar.%s: invalid value %q for environment variable %q", e.Func, e.Value, e.Key)
 }
 
 func (e ParseError) Unwrap() error {
