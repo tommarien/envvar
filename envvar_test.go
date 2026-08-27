@@ -114,3 +114,68 @@ func TestIntOrDefault(t *testing.T) {
 		assertIsParseErr(t, "IntOrDefault", "ENV_VAR", "A", err)
 	})
 }
+
+func TestBool(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		want  bool
+	}{
+		{"true", true},
+		{"false", false},
+		{"1", true},
+		{"0", false},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
+
+			got, err := envvar.Bool("ENV_VAR")
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
+
+	t.Run("var not set", func(t *testing.T) {
+		_, err := envvar.Bool("ENV_VAR")
+		assertIsNotSetErr(t, "Bool", "ENV_VAR", err)
+	})
+
+	t.Run("var set to invalid value", func(t *testing.T) {
+		t.Setenv("ENV_VAR", "A")
+
+		_, err := envvar.Bool("ENV_VAR")
+		assertIsParseErr(t, "Bool", "ENV_VAR", "A", err)
+	})
+}
+
+func TestBoolOrDefault(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		want  bool
+	}{
+		{"true", true},
+		{"false", false},
+		{"1", true},
+		{"0", false},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
+
+			got, err := envvar.BoolOrDefault("ENV_VAR", true)
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
+
+	t.Run("var not set", func(t *testing.T) {
+		got, err := envvar.BoolOrDefault("ENV_VAR", true)
+		assertIsNil(t, err)
+		assertEqual(t, got, true)
+	})
+
+	t.Run("var set to invalid value", func(t *testing.T) {
+		t.Setenv("ENV_VAR", "A")
+
+		_, err := envvar.BoolOrDefault("ENV_VAR", true)
+		assertIsParseErr(t, "BoolOrDefault", "ENV_VAR", "A", err)
+	})
+}

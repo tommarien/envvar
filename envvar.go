@@ -62,3 +62,17 @@ func Int(key string) (int, error) {
 func IntOrDefault(key string, defaultValue int) (int, error) {
 	return getOrDefault(key, defaultValue, "IntOrDefault", strconv.Atoi)
 }
+
+// Bool returns the value of the environment variable named by key, converted to a boolean.
+// If it is not set, it returns a [NotSetError].
+// If the conversion fails, it returns a [ParseError].
+func Bool(key string) (bool, error) {
+	return get(key, "Bool", strconv.ParseBool)
+}
+
+// BoolOrDefault returns the value of the environment variable named by key, converted to a boolean.
+// If it is not set, it returns defaultValue instead.
+// If the conversion fails, it returns a [ParseError].
+func BoolOrDefault(key string, defaultValue bool) (bool, error) {
+	return getOrDefault(key, defaultValue, "BoolOrDefault", strconv.ParseBool)
+}
