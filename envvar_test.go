@@ -242,3 +242,66 @@ func TestUIntOrDefault(t *testing.T) {
 		assertIsParseErr(t, "UIntOrDefault", "ENV_VAR", "-1", err)
 	})
 }
+
+func TestFloat(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		want  float64
+	}{
+		{"-1.5", -1.5},
+		{"0", 0},
+		{"1.5", 1.5},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
+
+			got, err := envvar.Float("ENV_VAR")
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
+
+	t.Run("var not set", func(t *testing.T) {
+		_, err := envvar.Float("ENV_VAR")
+		assertIsNotSetErr(t, "Float", "ENV_VAR", err)
+	})
+
+	t.Run("var set to invalid value", func(t *testing.T) {
+		t.Setenv("ENV_VAR", "A")
+
+		_, err := envvar.Float("ENV_VAR")
+		assertIsParseErr(t, "Float", "ENV_VAR", "A", err)
+	})
+}
+
+func TestFloatOrDefault(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		want  float64
+	}{
+		{"-1.5", -1.5},
+		{"0", 0},
+		{"1.5", 1.5},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
+
+			got, err := envvar.FloatOrDefault("ENV_VAR", 42)
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
+
+	t.Run("var not set", func(t *testing.T) {
+		got, err := envvar.FloatOrDefault("ENV_VAR", 42)
+		assertIsNil(t, err)
+		assertEqual(t, got, float64(42))
+	})
+
+	t.Run("var set to invalid value", func(t *testing.T) {
+		t.Setenv("ENV_VAR", "A")
+
+		_, err := envvar.FloatOrDefault("ENV_VAR", 42)
+		assertIsParseErr(t, "FloatOrDefault", "ENV_VAR", "A", err)
+	})
+}

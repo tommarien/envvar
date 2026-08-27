@@ -95,3 +95,21 @@ func UInt(key string) (uint, error) {
 func UIntOrDefault(key string, defaultValue uint) (uint, error) {
 	return getOrDefault(key, defaultValue, "UIntOrDefault", parseUint)
 }
+
+func parseFloat(value string) (float64, error) {
+	return strconv.ParseFloat(value, 64)
+}
+
+// Float returns the value of the environment variable named by key, converted to a float64.
+// If it is not set, it returns a [NotSetError].
+// If the conversion fails, it returns a [ParseError].
+func Float(key string) (float64, error) {
+	return get(key, "Float", parseFloat)
+}
+
+// FloatOrDefault returns the value of the environment variable named by key, converted to a float64.
+// If it is not set, it returns defaultValue instead.
+// If the conversion fails, it returns a [ParseError].
+func FloatOrDefault(key string, defaultValue float64) (float64, error) {
+	return getOrDefault(key, defaultValue, "FloatOrDefault", parseFloat)
+}
