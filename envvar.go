@@ -33,7 +33,8 @@ func Parse[T any](key, funcName string, parse ParseFunc[T]) (T, error) {
 // If parse fails, it returns a [ParseError].
 func ParseOrDefault[T any](key string, defaultValue T, funcName string, parse ParseFunc[T]) (T, error) {
 	value, err := Parse(key, funcName, parse)
-	if _, ok := errors.AsType[NotSetError](err); ok {
+	var notSetErr NotSetError
+	if errors.As(err, &notSetErr) {
 		return defaultValue, nil
 	}
 
