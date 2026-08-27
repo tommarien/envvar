@@ -10,10 +10,10 @@ import (
 // ParseFunc converts a raw environment variable value into T.
 type ParseFunc[T any] func(value string) (T, error)
 
-// Parse returns the value of the environment variable named by key, converted by parse.
+// Func returns the value of the environment variable named by key, converted by parse.
 // If it is not set, it returns a [NotSetError].
 // If parse fails, it returns a [ParseError].
-func Parse[T any](key, funcName string, parse ParseFunc[T]) (T, error) {
+func Func[T any](key, funcName string, parse ParseFunc[T]) (T, error) {
 	var zero T
 	envVar, ok := os.LookupEnv(key)
 	if !ok {
@@ -28,11 +28,11 @@ func Parse[T any](key, funcName string, parse ParseFunc[T]) (T, error) {
 	return value, nil
 }
 
-// ParseOrDefault returns the value of the environment variable named by key, converted by parse.
+// FuncOrDefault returns the value of the environment variable named by key, converted by parse.
 // If it is not set, it returns defaultValue instead.
 // If parse fails, it returns a [ParseError].
-func ParseOrDefault[T any](key string, defaultValue T, funcName string, parse ParseFunc[T]) (T, error) {
-	value, err := Parse(key, funcName, parse)
+func FuncOrDefault[T any](key string, defaultValue T, funcName string, parse ParseFunc[T]) (T, error) {
+	value, err := Func(key, funcName, parse)
 	var notSetErr NotSetError
 	if errors.As(err, &notSetErr) {
 		return defaultValue, nil
@@ -44,7 +44,7 @@ func ParseOrDefault[T any](key string, defaultValue T, funcName string, parse Pa
 // String returns the value of the environment variable named by key.
 // If it is not set, it returns a [NotSetError].
 func String(key string) (string, error) {
-	return Parse(key, "String", func(v string) (string, error) { return v, nil })
+	return Func(key, "String", func(v string) (string, error) { return v, nil })
 }
 
 // StringOrDefault returns the value of the environment variable named by key.
@@ -61,28 +61,28 @@ func StringOrDefault(key, defaultValue string) string {
 // If it is not set, it returns a [NotSetError].
 // If the conversion fails, it returns a [ParseError].
 func Int(key string) (int, error) {
-	return Parse(key, "Int", strconv.Atoi)
+	return Func(key, "Int", strconv.Atoi)
 }
 
 // IntOrDefault returns the value of the environment variable named by key, converted to an integer.
 // If it is not set, it returns defaultValue instead.
 // If the conversion fails, it returns a [ParseError].
 func IntOrDefault(key string, defaultValue int) (int, error) {
-	return ParseOrDefault(key, defaultValue, "IntOrDefault", strconv.Atoi)
+	return FuncOrDefault(key, defaultValue, "IntOrDefault", strconv.Atoi)
 }
 
 // Bool returns the value of the environment variable named by key, converted to a boolean.
 // If it is not set, it returns a [NotSetError].
 // If the conversion fails, it returns a [ParseError].
 func Bool(key string) (bool, error) {
-	return Parse(key, "Bool", strconv.ParseBool)
+	return Func(key, "Bool", strconv.ParseBool)
 }
 
 // BoolOrDefault returns the value of the environment variable named by key, converted to a boolean.
 // If it is not set, it returns defaultValue instead.
 // If the conversion fails, it returns a [ParseError].
 func BoolOrDefault(key string, defaultValue bool) (bool, error) {
-	return ParseOrDefault(key, defaultValue, "BoolOrDefault", strconv.ParseBool)
+	return FuncOrDefault(key, defaultValue, "BoolOrDefault", strconv.ParseBool)
 }
 
 func parseUint(value string) (uint, error) {
@@ -94,14 +94,14 @@ func parseUint(value string) (uint, error) {
 // If it is not set, it returns a [NotSetError].
 // If the conversion fails, it returns a [ParseError].
 func UInt(key string) (uint, error) {
-	return Parse(key, "UInt", parseUint)
+	return Func(key, "UInt", parseUint)
 }
 
 // UIntOrDefault returns the value of the environment variable named by key, converted to an unsigned integer.
 // If it is not set, it returns defaultValue instead.
 // If the conversion fails, it returns a [ParseError].
 func UIntOrDefault(key string, defaultValue uint) (uint, error) {
-	return ParseOrDefault(key, defaultValue, "UIntOrDefault", parseUint)
+	return FuncOrDefault(key, defaultValue, "UIntOrDefault", parseUint)
 }
 
 func parseFloat(value string) (float64, error) {
@@ -112,26 +112,26 @@ func parseFloat(value string) (float64, error) {
 // If it is not set, it returns a [NotSetError].
 // If the conversion fails, it returns a [ParseError].
 func Float(key string) (float64, error) {
-	return Parse(key, "Float", parseFloat)
+	return Func(key, "Float", parseFloat)
 }
 
 // FloatOrDefault returns the value of the environment variable named by key, converted to a float64.
 // If it is not set, it returns defaultValue instead.
 // If the conversion fails, it returns a [ParseError].
 func FloatOrDefault(key string, defaultValue float64) (float64, error) {
-	return ParseOrDefault(key, defaultValue, "FloatOrDefault", parseFloat)
+	return FuncOrDefault(key, defaultValue, "FloatOrDefault", parseFloat)
 }
 
 // Duration returns the value of the environment variable named by key, converted to a [time.Duration].
 // If it is not set, it returns a [NotSetError].
 // If the conversion fails, it returns a [ParseError].
 func Duration(key string) (time.Duration, error) {
-	return Parse(key, "Duration", time.ParseDuration)
+	return Func(key, "Duration", time.ParseDuration)
 }
 
 // DurationOrDefault returns the value of the environment variable named by key, converted to a [time.Duration].
 // If it is not set, it returns defaultValue instead.
 // If the conversion fails, it returns a [ParseError].
 func DurationOrDefault(key string, defaultValue time.Duration) (time.Duration, error) {
-	return ParseOrDefault(key, defaultValue, "DurationOrDefault", time.ParseDuration)
+	return FuncOrDefault(key, defaultValue, "DurationOrDefault", time.ParseDuration)
 }
