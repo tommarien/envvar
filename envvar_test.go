@@ -2,6 +2,7 @@ package envvar_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/tommarien/envvar"
 )
@@ -303,5 +304,68 @@ func TestFloatOrDefault(t *testing.T) {
 
 		_, err := envvar.FloatOrDefault("ENV_VAR", 42)
 		assertIsParseErr(t, "FloatOrDefault", "ENV_VAR", "A", err)
+	})
+}
+
+func TestDuration(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		want  time.Duration
+	}{
+		{"1s", time.Second},
+		{"500ms", 500 * time.Millisecond},
+		{"2h", 2 * time.Hour},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
+
+			got, err := envvar.Duration("ENV_VAR")
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
+
+	t.Run("var not set", func(t *testing.T) {
+		_, err := envvar.Duration("ENV_VAR")
+		assertIsNotSetErr(t, "Duration", "ENV_VAR", err)
+	})
+
+	t.Run("var set to invalid value", func(t *testing.T) {
+		t.Setenv("ENV_VAR", "A")
+
+		_, err := envvar.Duration("ENV_VAR")
+		assertIsParseErr(t, "Duration", "ENV_VAR", "A", err)
+	})
+}
+
+func TestDurationOrDefault(t *testing.T) {
+	for _, tc := range []struct {
+		value string
+		want  time.Duration
+	}{
+		{"1s", time.Second},
+		{"500ms", 500 * time.Millisecond},
+		{"2h", 2 * time.Hour},
+	} {
+		t.Run("var set to "+tc.value, func(t *testing.T) {
+			t.Setenv("ENV_VAR", tc.value)
+
+			got, err := envvar.DurationOrDefault("ENV_VAR", time.Minute)
+			assertIsNil(t, err)
+			assertEqual(t, got, tc.want)
+		})
+	}
+
+	t.Run("var not set", func(t *testing.T) {
+		got, err := envvar.DurationOrDefault("ENV_VAR", time.Minute)
+		assertIsNil(t, err)
+		assertEqual(t, got, time.Minute)
+	})
+
+	t.Run("var set to invalid value", func(t *testing.T) {
+		t.Setenv("ENV_VAR", "A")
+
+		_, err := envvar.DurationOrDefault("ENV_VAR", time.Minute)
+		assertIsParseErr(t, "DurationOrDefault", "ENV_VAR", "A", err)
 	})
 }

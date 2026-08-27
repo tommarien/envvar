@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"strconv"
+	"time"
 )
 
 // ParseFunc converts a raw environment variable value into T.
@@ -112,4 +113,18 @@ func Float(key string) (float64, error) {
 // If the conversion fails, it returns a [ParseError].
 func FloatOrDefault(key string, defaultValue float64) (float64, error) {
 	return getOrDefault(key, defaultValue, "FloatOrDefault", parseFloat)
+}
+
+// Duration returns the value of the environment variable named by key, converted to a [time.Duration].
+// If it is not set, it returns a [NotSetError].
+// If the conversion fails, it returns a [ParseError].
+func Duration(key string) (time.Duration, error) {
+	return get(key, "Duration", time.ParseDuration)
+}
+
+// DurationOrDefault returns the value of the environment variable named by key, converted to a [time.Duration].
+// If it is not set, it returns defaultValue instead.
+// If the conversion fails, it returns a [ParseError].
+func DurationOrDefault(key string, defaultValue time.Duration) (time.Duration, error) {
+	return getOrDefault(key, defaultValue, "DurationOrDefault", time.ParseDuration)
 }
