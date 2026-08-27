@@ -76,3 +76,22 @@ func Bool(key string) (bool, error) {
 func BoolOrDefault(key string, defaultValue bool) (bool, error) {
 	return getOrDefault(key, defaultValue, "BoolOrDefault", strconv.ParseBool)
 }
+
+func parseUint(value string) (uint, error) {
+	v, err := strconv.ParseUint(value, 10, 0)
+	return uint(v), err
+}
+
+// UInt returns the value of the environment variable named by key, converted to an unsigned integer.
+// If it is not set, it returns a [NotSetError].
+// If the conversion fails, it returns a [ParseError].
+func UInt(key string) (uint, error) {
+	return get(key, "UInt", parseUint)
+}
+
+// UIntOrDefault returns the value of the environment variable named by key, converted to an unsigned integer.
+// If it is not set, it returns defaultValue instead.
+// If the conversion fails, it returns a [ParseError].
+func UIntOrDefault(key string, defaultValue uint) (uint, error) {
+	return getOrDefault(key, defaultValue, "UIntOrDefault", parseUint)
+}
