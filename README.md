@@ -1,4 +1,6 @@
 # envvar
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/tommarien/envvar/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tommarien/envvar/tree/main)
+
 A zero dependency library to parse environment variables
 
 ## Install
