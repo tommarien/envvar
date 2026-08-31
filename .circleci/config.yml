@@ -4,9 +4,12 @@ orbs:
 
 jobs:
   build_and_test: # this can be any name you choose
+    parameters:
+      go-version:
+        type: string
     executor:
       name: go/default # Use the default executor from the orb
-      tag: "1.23" # Specify a version tag
+      tag: << parameters.go-version >>
     steps:
       - checkout
       - go/mod-download
@@ -16,4 +19,7 @@ jobs:
 workflows:
   main:
     jobs:
-      - build_and_test
+      - build_and_test:
+          matrix:
+            parameters:
+              go-version: ["1.18", "1.23"]
