@@ -14,7 +14,7 @@
 //	region := envvar.StringOrDefault("REGION", "eu-west-1")
 //	timeout, err := envvar.DurationOrDefault("TIMEOUT", 10*time.Minute)
 //
-// [String], [Int], [Bool], [UInt], [Float] and [Duration] cover the common
+// [String], [Int], [Bool], [UInt], [Float64] and [Duration] cover the common
 // types. [Func] and [FuncOrDefault] take a [ParseFunc] and so convert into
 // any type.
 //
@@ -147,22 +147,22 @@ func UIntOrDefault(key string, defaultValue uint) (uint, error) {
 	return FuncOrDefault(key, defaultValue, "UIntOrDefault", parseUint)
 }
 
-func parseFloat(value string) (float64, error) {
+func parseFloat64(value string) (float64, error) {
 	return strconv.ParseFloat(value, 64)
 }
 
-// Float returns the value of the environment variable named by key, converted to a float64.
+// Float64 returns the value of the environment variable named by key, converted to a float64.
 // If it is not set, it returns a [NotSetError].
 // If the conversion fails, it returns a [ParseError].
-func Float(key string) (float64, error) {
-	return Func(key, "Float", parseFloat)
+func Float64(key string) (float64, error) {
+	return Func(key, "Float64", parseFloat64)
 }
 
-// FloatOrDefault returns the value of the environment variable named by key, converted to a float64.
+// Float64OrDefault returns the value of the environment variable named by key, converted to a float64.
 // If it is not set, it returns defaultValue instead.
 // If the conversion fails, it returns a [ParseError].
-func FloatOrDefault(key string, defaultValue float64) (float64, error) {
-	return FuncOrDefault(key, defaultValue, "FloatOrDefault", parseFloat)
+func Float64OrDefault(key string, defaultValue float64) (float64, error) {
+	return FuncOrDefault(key, defaultValue, "Float64OrDefault", parseFloat64)
 }
 
 // Duration returns the value of the environment variable named by key, converted to a [time.Duration].

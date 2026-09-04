@@ -102,14 +102,14 @@ func UIntVarOrDefault(s *VarSet, p *uint, key string, defaultValue uint) {
 	varFunc(s, p, key, func(key string) (uint, error) { return UIntOrDefault(key, defaultValue) })
 }
 
-// FloatVar registers key with s, assigning [Float]'s result to *p.
-func FloatVar(s *VarSet, p *float64, key string) {
-	varFunc(s, p, key, Float)
+// Float64Var registers key with s, assigning [Float64]'s result to *p.
+func Float64Var(s *VarSet, p *float64, key string) {
+	varFunc(s, p, key, Float64)
 }
 
-// FloatVarOrDefault registers key with s, assigning [FloatOrDefault]'s result to *p.
-func FloatVarOrDefault(s *VarSet, p *float64, key string, defaultValue float64) {
-	varFunc(s, p, key, func(key string) (float64, error) { return FloatOrDefault(key, defaultValue) })
+// Float64VarOrDefault registers key with s, assigning [Float64OrDefault]'s result to *p.
+func Float64VarOrDefault(s *VarSet, p *float64, key string, defaultValue float64) {
+	varFunc(s, p, key, func(key string) (float64, error) { return Float64OrDefault(key, defaultValue) })
 }
 
 // DurationVar registers key with s, assigning [Duration]'s result to *p.

@@ -34,7 +34,7 @@ timeout, err := envvar.DurationOrDefault("TIMEOUT", 10*time.Minute)
 | `int`           | `Int`             | `IntOrDefault`             |
 | `bool`          | `Bool`            | `BoolOrDefault`            |
 | `uint`          | `UInt`            | `UIntOrDefault`            |
-| `float64`       | `Float`           | `FloatOrDefault`           |
+| `float64`       | `Float64`           | `Float64OrDefault`           |
 | `time.Duration` | `Duration`        | `DurationOrDefault`        |
 | any other type  | `Func`            | `FuncOrDefault`            |
 
@@ -78,7 +78,7 @@ if errors.As(err, &parseErr) {
 ```
 
 Each accessor has a matching registration function: `StringVar`, `IntVar`,
-`BoolVar`, `UIntVar`, `FloatVar`, `DurationVar` and their `OrDefault`
+`BoolVar`, `UIntVar`, `Float64Var`, `DurationVar` and their `OrDefault`
 counterparts.
 
 ## Custom types

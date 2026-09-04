@@ -244,7 +244,7 @@ func TestUIntOrDefault(t *testing.T) {
 	})
 }
 
-func TestFloat(t *testing.T) {
+func TestFloat64(t *testing.T) {
 	for _, tc := range []struct {
 		value string
 		want  float64
@@ -256,26 +256,26 @@ func TestFloat(t *testing.T) {
 		t.Run("var set to "+tc.value, func(t *testing.T) {
 			t.Setenv("ENV_VAR", tc.value)
 
-			got, err := envvar.Float("ENV_VAR")
+			got, err := envvar.Float64("ENV_VAR")
 			assertIsNil(t, err)
 			assertEqual(t, got, tc.want)
 		})
 	}
 
 	t.Run("var not set", func(t *testing.T) {
-		_, err := envvar.Float("ENV_VAR")
-		assertIsNotSetErr(t, "Float", "ENV_VAR", err)
+		_, err := envvar.Float64("ENV_VAR")
+		assertIsNotSetErr(t, "Float64", "ENV_VAR", err)
 	})
 
 	t.Run("var set to invalid value", func(t *testing.T) {
 		t.Setenv("ENV_VAR", "A")
 
-		_, err := envvar.Float("ENV_VAR")
-		assertIsParseErr(t, "Float", "ENV_VAR", "A", err)
+		_, err := envvar.Float64("ENV_VAR")
+		assertIsParseErr(t, "Float64", "ENV_VAR", "A", err)
 	})
 }
 
-func TestFloatOrDefault(t *testing.T) {
+func TestFloat64OrDefault(t *testing.T) {
 	for _, tc := range []struct {
 		value string
 		want  float64
@@ -287,14 +287,14 @@ func TestFloatOrDefault(t *testing.T) {
 		t.Run("var set to "+tc.value, func(t *testing.T) {
 			t.Setenv("ENV_VAR", tc.value)
 
-			got, err := envvar.FloatOrDefault("ENV_VAR", 42)
+			got, err := envvar.Float64OrDefault("ENV_VAR", 42)
 			assertIsNil(t, err)
 			assertEqual(t, got, tc.want)
 		})
 	}
 
 	t.Run("var not set", func(t *testing.T) {
-		got, err := envvar.FloatOrDefault("ENV_VAR", 42)
+		got, err := envvar.Float64OrDefault("ENV_VAR", 42)
 		assertIsNil(t, err)
 		assertEqual(t, got, float64(42))
 	})
@@ -302,8 +302,8 @@ func TestFloatOrDefault(t *testing.T) {
 	t.Run("var set to invalid value", func(t *testing.T) {
 		t.Setenv("ENV_VAR", "A")
 
-		_, err := envvar.FloatOrDefault("ENV_VAR", 42)
-		assertIsParseErr(t, "FloatOrDefault", "ENV_VAR", "A", err)
+		_, err := envvar.Float64OrDefault("ENV_VAR", 42)
+		assertIsParseErr(t, "Float64OrDefault", "ENV_VAR", "A", err)
 	})
 }
 

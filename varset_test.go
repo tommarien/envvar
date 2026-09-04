@@ -264,13 +264,13 @@ func TestUIntVarOrDefault(t *testing.T) {
 	})
 }
 
-func TestFloatVar(t *testing.T) {
+func TestFloat64Var(t *testing.T) {
 	t.Run("var set", func(t *testing.T) {
 		t.Setenv("ENV_VAR", "4.2")
 
 		var s envvar.VarSet
 		var got float64
-		envvar.FloatVar(&s, &got, "ENV_VAR")
+		envvar.Float64Var(&s, &got, "ENV_VAR")
 
 		assertIsNil(t, s.Parse())
 		assertEqual(t, got, 4.2)
@@ -281,29 +281,29 @@ func TestFloatVar(t *testing.T) {
 
 		var s envvar.VarSet
 		var got float64
-		envvar.FloatVar(&s, &got, "ENV_VAR")
+		envvar.Float64Var(&s, &got, "ENV_VAR")
 
 		parseErr := assertIsVarSetParseErr(t, s.Parse())
-		assertIsParseErr(t, "Float", "ENV_VAR", "not a float", parseErr.GetError("ENV_VAR"))
+		assertIsParseErr(t, "Float64", "ENV_VAR", "not a float", parseErr.GetError("ENV_VAR"))
 	})
 
 	t.Run("var not set", func(t *testing.T) {
 		var s envvar.VarSet
 		var got float64
-		envvar.FloatVar(&s, &got, "ENV_VAR")
+		envvar.Float64Var(&s, &got, "ENV_VAR")
 
 		parseErr := assertIsVarSetParseErr(t, s.Parse())
-		assertIsNotSetErr(t, "Float", "ENV_VAR", parseErr.GetError("ENV_VAR"))
+		assertIsNotSetErr(t, "Float64", "ENV_VAR", parseErr.GetError("ENV_VAR"))
 	})
 }
 
-func TestFloatVarOrDefault(t *testing.T) {
+func TestFloat64VarOrDefault(t *testing.T) {
 	t.Run("var set", func(t *testing.T) {
 		t.Setenv("ENV_VAR", "4.2")
 
 		var s envvar.VarSet
 		var got float64
-		envvar.FloatVarOrDefault(&s, &got, "ENV_VAR", 2.1)
+		envvar.Float64VarOrDefault(&s, &got, "ENV_VAR", 2.1)
 
 		assertIsNil(t, s.Parse())
 		assertEqual(t, got, 4.2)
@@ -314,16 +314,16 @@ func TestFloatVarOrDefault(t *testing.T) {
 
 		var s envvar.VarSet
 		var got float64
-		envvar.FloatVarOrDefault(&s, &got, "ENV_VAR", 2.1)
+		envvar.Float64VarOrDefault(&s, &got, "ENV_VAR", 2.1)
 
 		parseErr := assertIsVarSetParseErr(t, s.Parse())
-		assertIsParseErr(t, "FloatOrDefault", "ENV_VAR", "not a float", parseErr.GetError("ENV_VAR"))
+		assertIsParseErr(t, "Float64OrDefault", "ENV_VAR", "not a float", parseErr.GetError("ENV_VAR"))
 	})
 
 	t.Run("var not set", func(t *testing.T) {
 		var s envvar.VarSet
 		var got float64
-		envvar.FloatVarOrDefault(&s, &got, "ENV_VAR", 2.1)
+		envvar.Float64VarOrDefault(&s, &got, "ENV_VAR", 2.1)
 
 		assertIsNil(t, s.Parse())
 		assertEqual(t, got, 2.1)
